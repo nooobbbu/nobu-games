@@ -1,0 +1,118 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#1c63b8"><title>nobuxy</title><!-- nobuxy FIX1: random-box isolation + robust column compaction -->
+<style>
+:root{--blue:#1c63b8;--blue2:#2c8df0;--panel:#eef6fc;--line:#b9d2ea;--text:#153c66;--muted:#6d86a3;--yellow:#f2db5a;--green:#99df66;--orange:#f4b449;--pink:#f2b8e6;--sky:#9fe0f6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:linear-gradient(#edf5fc,#d7e7f6);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--text)}body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);user-select:none;-webkit-user-select:none}.app{width:min(900px,100%);margin:auto}.header{padding:12px 14px;background:linear-gradient(135deg,var(--blue),var(--blue2));border-bottom:4px solid #e8c73a;color:#fff;display:flex;align-items:center;gap:8px}.title{font-size:27px;font-weight:950;letter-spacing:4px}.spacer{flex:1}.hbtn{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:850;text-decoration:none}.playerbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#f6fbff;border-bottom:1px solid var(--line);font-size:11px}.playerbar b{color:#124476}.pbsp{flex:1}.mini{border:1px solid #9bb7d3;background:#fff;color:#174675;border-radius:9px;padding:7px 9px;font-weight:800;font-size:10px}.status{display:flex;align-items:center;gap:8px;padding:10px;background:#fff;border-bottom:1px solid var(--line);font-size:12px}.statusInfo{flex:1;font-weight:750}.statusInfo b{font-size:1.12em}.boardFrame{padding:7px;background:#d8e9f8}.boardWrap{position:relative;width:100%;aspect-ratio:14/9.8;background:#1e5ea0;border-radius:14px;padding:8px;overflow:hidden}.board{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(14,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));gap:3px}.cell{--glyph:#234f80;position:relative;min-width:0;min-height:0;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}.c1{--glyph:#0e67ac;background:var(--sky)}.c2{--glyph:#8b6700;background:var(--yellow)}.c3{--glyph:#3d7d23;background:var(--green)}.c4{--glyph:#c26c00;background:var(--orange)}.c5{--glyph:#cf4695;background:var(--pink)}.shuffle{background:#fff}.shuffle::after{content:"";position:absolute;inset:28%;border-radius:999px;background:conic-gradient(#41a9f5 0 20%,#f4dd59 20% 40%,#8fd85e 40% 60%,#f2ad49 60% 80%,#ec8fd6 80% 100%)}.letter{position:relative;z-index:2;font-size:clamp(14px,3.7vw,35px);font-weight:950;color:var(--glyph);-webkit-text-stroke:.45px rgba(255,255,255,.95);paint-order:stroke fill;line-height:.9}.c1 .letter{transform:scale(1.14,1.05) rotate(-6deg)}.c2 .letter{transform:scale(1.10,1.04) rotate(2deg)}.c3 .letter{transform:scale(1.10,1.05) rotate(-2deg)}.c4 .letter{transform:scale(1.08,1.03) rotate(2deg)}.c5 .letter{transform:scale(1.14,1.06) rotate(-4deg)}.shuffle .letter{color:#2572b9;transform:none}.cell.sel{outline:3px solid #fff08b;outline-offset:-2px}.cell.armed{outline:3px solid #ffcf4e;outline-offset:-2px}.cell.removing{animation:pop .28s ease forwards}@keyframes pop{60%{transform:scale(1.1)}100%{transform:scale(.1);opacity:0}}.info{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}.box{padding:12px;background:#fff;border:1px solid #d3e0ed;border-radius:12px;min-height:115px}.lbl{font-size:10px;color:#6d86a3;font-weight:850}.val{font-size:30px;font-weight:950;margin-top:4px}.sub{font-size:11px;color:#698097;margin-top:5px}.target{background:#fff8d7}.target .val{color:#a86d00}.message{margin:0 10px 10px;padding:12px 14px;background:#fff8d7;border:1px solid #eadca0;border-radius:12px;color:#5c4703;font-size:12px;line-height:1.55}.sync{font-size:10px;text-align:right;padding:0 11px 10px;color:#60778f}.ok{color:#23853d}.err{color:#b83f3f}.overlay{position:fixed;inset:0;z-index:99;background:rgba(8,22,40,.55);display:flex;align-items:center;justify-content:center;padding:14px}.hidden{display:none}.modal{width:min(540px,96vw);max-height:90dvh;overflow:auto;background:#fff;border-radius:18px}.mh{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:14px 16px;font-weight:950;font-size:20px}.mb{padding:15px;font-size:13px;line-height:1.6}.ma{padding:12px 15px;border-top:1px solid #e1eaf2;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;position:sticky;bottom:0;background:#fff}.primary,.secondary{padding:9px 12px;border-radius:10px;font-weight:900}.primary{border:0;background:#1f67ba;color:#fff}.secondary{border:1px solid #9ab5d0;background:#fff;color:#183b64}.ranking{width:100%;border-collapse:collapse;font-size:12px}.ranking th,.ranking td{padding:8px 5px;border-bottom:1px solid #e1eaf2}.ranking td:last-child,.ranking th:last-child{text-align:right}.me{background:#fff5b5}.how{display:grid;gap:8px}.how div{padding:9px;border:1px solid #dce7ef;border-radius:10px;background:#fbfdff}
+@media(max-width:600px){.title{font-size:23px}.hbtn{padding:6px 7px}.status{font-size:10px}.boardWrap{border-radius:12px}.board{gap:2px}.info{gap:8px;padding:8px}.box{min-height:104px}.val{font-size:25px}}
+</style></head><body><div class="app"><div class="header"><div class="title">nobuxy</div><div class="spacer"></div><a class="hbtn" href="../">ゲーム選択</a><button class="hbtn" id="howBtn">遊び方</button></div><div class="playerbar"><span>PLAYER <b id="playerName">接続中…</b></span><div class="pbsp"></div><button class="mini" id="playerBtn">プレイヤー</button><button class="mini" id="rankingBtn">ランキング</button><button class="mini" id="restartBtn">やり直し</button></div><div class="status"><div class="statusInfo">LEVEL <b id="levelTop">1</b>　SCORE <b id="scoreTop">0</b>　残り <b id="remainTop">126</b></div></div><div class="boardFrame"><div class="boardWrap"><div class="board" id="board"></div></div></div><div class="info"><div class="box target"><div class="lbl">NEXT STAGE</div><div class="val" id="targetText">750点</div><div class="sub" id="targetSub">あと750点</div></div><div class="box"><div class="lbl">MY BEST</div><div class="val" id="bestText">0</div><div class="sub" id="bestLevel">LEVEL 1</div></div></div><div class="message" id="message">同じ文字のまとまりを1回タップで選択、もう1回タップで消します。</div><div class="sync" id="sync">オンライン接続中…</div></div><div class="overlay hidden" id="overlay"><div class="modal"><div class="mh" id="modalTitle"></div><div class="mb" id="modalBody"></div><div class="ma" id="modalActions"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../shared/online.js"></script><script>
+(()=>{'use strict';const COLS=14,ROWS=9,SIZE=COLS*ROWS,SHUFFLE=6,MAX_LEVEL=20;const LETTER={1:'ノ',2:'ブ',3:'カ',4:'ホ',5:'リ'};const $=id=>document.getElementById(id);const boardEl=$('board'),msg=$('message'),sync=$('sync'),overlay=$('overlay');let board=[],score=0,level=1,selected=[],armed=-1,armedTarget=0,player=null,saveTimer=null,playing=true;const fmt=n=>Math.max(0,Math.floor(n)).toLocaleString('ja-JP');const target=lv=>750*lv*lv;const idx=(r,c)=>r*COLS+c;const rc=i=>[Math.floor(i/COLS),i%COLS];
+function newBoard(){board=Array.from({length:SIZE},()=>Math.random()<.035?SHUFFLE:1+Math.floor(Math.random()*5));selected=[];armed=-1;armedTarget=0;ensureMove();render()}
+function neighbors(i){const [r,c]=rc(i),a=[];if(r>0)a.push(i-COLS);if(r<ROWS-1)a.push(i+COLS);if(c>0)a.push(i-1);if(c<COLS-1)a.push(i+1);return a}
+function group(i){const t=board[i];if(!t||t===SHUFFLE)return[];const out=[],seen=new Set([i]),q=[i];while(q.length){const x=q.shift();out.push(x);for(const n of neighbors(x))if(!seen.has(n)&&board[n]===t){seen.add(n);q.push(n)}}return out}
+function hasMove(){for(let i=0;i<SIZE;i++){if(board[i]===SHUFFLE)return true;if(board[i]&&group(i).length>=2)return true}return false}
+function ensureMove(){if(hasMove())return;for(let tries=0;tries<20&&!hasMove();tries++){const vals=board.filter(Boolean);for(let i=vals.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[vals[i],vals[j]]=[vals[j],vals[i]]}board=vals.concat(Array(SIZE-vals.length).fill(null))}}
+function render(){boardEl.innerHTML='';board.forEach((v,i)=>{const d=document.createElement('div');d.dataset.i=i;d.className='cell '+(v===SHUFFLE?'shuffle':v?'c'+v:'');if(!v){d.style.visibility='hidden'}const l=document.createElement('div');l.className='letter';l.textContent=v===SHUFFLE?'？':LETTER[v]||'';d.appendChild(l);if(selected.includes(i))d.classList.add('sel');if(i===armed)d.classList.add('armed');boardEl.appendChild(d)});$('levelTop').textContent=level;$('scoreTop').textContent=fmt(score);$('remainTop').textContent=board.filter(Boolean).length;const t=target(level);$('targetText').textContent=fmt(t)+'点';$('targetSub').textContent=score>=t?'条件達成':'あと'+fmt(t-score)+'点';$('bestText').textContent=fmt(Math.max(score,Number(player?.best_score||0)));$('bestLevel').textContent='LEVEL '+Math.max(level,Number(player?.best_level||1))}
+function collapse(){
+  // 1) 各列を下詰め 2) 空列を完全に除去して左詰め、を必ず1回の再構築で行う。
+  const packedCols=[];
+  for(let c=0;c<COLS;c++){
+    const vals=[];
+    for(let r=0;r<ROWS;r++){
+      const v=board[idx(r,c)];
+      if(v!==null&&v!==undefined&&v!==0)vals.push(v);
+    }
+    if(!vals.length)continue;
+    const col=Array(ROWS).fill(null);
+    const start=ROWS-vals.length;
+    for(let j=0;j<vals.length;j++)col[start+j]=vals[j];
+    packedCols.push(col);
+  }
+  const nb=Array(SIZE).fill(null);
+  packedCols.forEach((col,newC)=>{
+    for(let r=0;r<ROWS;r++)nb[idx(r,newC)]=col[r];
+  });
+  board=nb;
+}
+function scheduleSave(force=false){if(!player)return Promise.resolve();if(saveTimer)clearTimeout(saveTimer);const run=async()=>{try{sync.textContent='BEST SCOREを保存中…';const r=await OnlineCore.api('/api/nobuxy/submit',{method:'POST',body:JSON.stringify({score,level})});player=r.player;sync.textContent='● BEST SCORE保存済み';sync.className='sync ok';render()}catch(e){sync.textContent='保存失敗: '+e.message;sync.className='sync err'}};if(force)return run();saveTimer=setTimeout(run,800)}
+function removeGroup(g){playing=false;g.forEach(i=>document.querySelector(`.cell[data-i="${i}"]`)?.classList.add('removing'));setTimeout(()=>{g.forEach(i=>board[i]=null);score+=5*g.length*g.length;selected=[];collapse();render();scheduleSave();playing=true;checkEnd()},260)}
+function checkEnd(){if(hasMove())return;if(score>=target(level)){if(level>=MAX_LEVEL){scheduleSave(true);showResult('ALL CLEAR!','全20 LEVELクリア！')}else{level++;scheduleSave(true);showDialog('LEVEL '+(level-1)+' CLEAR','<b>次はLEVEL '+level+'</b><br>盤面を新しくして続行します。','次へ',()=>{hideDialog();newBoard()})}}else{scheduleSave(true);showResult('GAME OVER','必要スコア '+fmt(target(level))+'点に届きませんでした。')}}
+function showResult(title,text){showDialog(title,'<div style="font-size:18px;font-weight:900;margin-bottom:8px">'+text+'</div>SCORE <b>'+fmt(score)+'</b><br>MY BEST <b>'+fmt(Math.max(score,Number(player?.best_score||0)))+'</b>','もう一度',()=>{score=0;level=1;hideDialog();newBoard()})}
+function chooseShuffleTarget(i){const [r,c]=rc(i),count={1:0,2:0,3:0,4:0,5:0};for(let rr=Math.max(0,r-2);rr<=Math.min(ROWS-1,r+2);rr++)for(let cc=Math.max(0,c-2);cc<=Math.min(COLS-1,c+2);cc++){const v=board[idx(rr,cc)];if(v>=1&&v<=5)count[v]++}return Object.keys(count).map(Number).sort((a,b)=>count[b]-count[a])[0]||1}
+function useShuffle(i,t){
+  const [cr,cc]=rc(i);
+  const inArea=k=>{
+    const [r,c]=rc(k);
+    return Math.abs(r-cr)<=2&&Math.abs(c-cc)<=2;
+  };
+
+  // 発動する「？」以外のランダムボックスは一切移動・変換しない。
+  // 対象文字と通常タイルだけを入れ替え、発動した「？」自身は対象文字になる。
+  const targetSources=[];
+  for(let k=0;k<SIZE;k++){
+    if(inArea(k)&&board[k]===t)targetSources.push(k);
+  }
+
+  const candidates=[];
+  for(let k=0;k<SIZE;k++){
+    if(!inArea(k)||k===i)continue;
+    const v=board[k];
+    if(v===null||v===undefined||v===0||v===SHUFFLE)continue;
+    const [r,c]=rc(k);
+    candidates.push({k,dist:Math.abs(r-cr)+Math.abs(c-cc)});
+  }
+  candidates.sort((a,b)=>a.dist-b.dist||a.k-b.k);
+
+  // 発動した「？」で対象文字が1個増えるため、その周囲に元からある対象文字数ぶんを集結させる。
+  const desired=new Set(candidates.slice(0,targetSources.length).map(x=>x.k));
+  const movableSources=targetSources.filter(k=>!desired.has(k));
+
+  for(const d of desired){
+    if(board[d]===t)continue;
+    const s=movableSources.shift();
+    if(s===undefined)break;
+    // d と s はどちらも通常タイル。SHUFFLE はこの交換に入らない。
+    [board[d],board[s]]=[board[s],board[d]];
+  }
+
+  board[i]=t;
+  armed=-1;
+  armedTarget=0;
+  selected=[];
+  collapse(); // 盤面の「下詰め＋空列左詰め」不変条件もここで再保証する。
+  render();
+  msg.textContent='？ 集結！「'+LETTER[t]+'」を近くへ集めました。';
+}
+function tap(i){if(!playing||!board[i])return;if(board[i]===SHUFFLE){if(armed===i){useShuffle(i,armedTarget);return}armed=i;armedTarget=chooseShuffleTarget(i);selected=[];render();msg.textContent='？ 周囲から「'+LETTER[armedTarget]+'」を集めます。もう1回タップで発動。';return}armed=-1;armedTarget=0;const g=group(i);if(g.length<2){selected=[];render();msg.textContent='同じ文字が2個以上つながった場所を選んでください。';return}if(selected.length&&selected.includes(i)&&selected.length===g.length){removeGroup(g)}else{selected=g;render();msg.textContent=g.length+'個を選択。もう1回タップで消去 → +'+fmt(5*g.length*g.length)+'点'}}
+function showDialog(title,body,btn,fn,secondary){$('modalTitle').textContent=title;$('modalBody').innerHTML=body;$('modalActions').innerHTML='';if(secondary){const s=document.createElement('button');s.className='secondary';s.textContent=secondary.text;s.onclick=secondary.fn;$('modalActions').appendChild(s)}if(btn){const b=document.createElement('button');b.className='primary';b.textContent=btn;b.onclick=fn;$('modalActions').appendChild(b)}overlay.classList.remove('hidden')}
+function hideDialog(){overlay.classList.add('hidden')}
+async function ranking(){showDialog('ランキング','読み込み中…','閉じる',hideDialog);try{const r=await OnlineCore.api('/api/nobuxy/leaderboard');let h='<table class="ranking"><tr><th>順位</th><th>PLAYER</th><th>SCORE</th></tr>';for(const x of r.rows)h+=`<tr class="${x.auth_user_id===player?.auth_user_id?'me':''}"><td>${x.rank}</td><td>${escapeHtml(x.player_name)}</td><td>${fmt(x.best_score)}</td></tr>`;h+='</table>';if(r.myRank)h+='<p>あなたの順位：<b>'+r.myRank+'位</b></p>';$('modalBody').innerHTML=h}catch(e){$('modalBody').textContent=e.message}}
+async function playerSettings(){
+  const p=player||OnlineCore.getPlayer();
+  const code=OnlineCore.getStoredRecoveryCode()||'この端末には保存されていません';
+  showDialog('プレイヤー設定',
+    '<div style="display:grid;gap:10px">'+
+    '<div><b>プレイヤー名</b></div>'+
+    '<input id="accName" maxlength="16" value="'+escapeHtml(p?.player_name||'')+'" style="width:100%;font-size:16px;padding:10px;border:1px solid #b8cad9;border-radius:10px">'+
+    '<button id="accRename" class="secondary">名前を変更</button>'+
+    '<hr style="width:100%;border:0;border-top:1px solid #e1eaf2">'+
+    '<div><b>引き継ぎコード</b></div>'+
+    '<div id="accCode" style="font-family:ui-monospace,monospace;background:#eef3f7;padding:10px;border-radius:10px;font-weight:900;word-break:break-all">'+escapeHtml(code)+'</div>'+
+    '<div style="font-size:11px;color:#60778f">同じURL・同じブラウザなら、ゲーム更新後も通常は自動で同じプレイヤーを使います。コードは端末変更やブラウザデータ削除時の保険です。</div>'+
+    '<button id="accNewCode" class="secondary">コードを発行 / 再発行</button>'+
+    '<hr style="width:100%;border:0;border-top:1px solid #e1eaf2">'+
+    '<div><b>別端末・別セッションから引き継ぐ</b></div>'+
+    '<input id="accRecover" placeholder="XXXX-XXXX-XXXX" style="width:100%;font-size:16px;padding:10px;border:1px solid #b8cad9;border-radius:10px">'+
+    '<button id="accRecoverBtn" class="secondary">このコードで引き継ぐ</button>'+
+    '<div id="accMsg" style="font-size:11px;color:#60778f"></div>'+
+    '</div>',
+    '閉じる',hideDialog
+  );
+  $('accRename').onclick=async()=>{try{player=await OnlineCore.rename($('accName').value);$('playerName').textContent=player.player_name;$('accMsg').textContent='名前を変更しました'}catch(e){$('accMsg').textContent=e.message}};
+  $('accNewCode').onclick=async()=>{try{const r=await OnlineCore.newRecovery();$('accCode').textContent=r.recoveryCode;$('accMsg').textContent='新しいコードを発行しました。以前のコードは無効です。'}catch(e){$('accMsg').textContent=e.message}};
+  $('accRecoverBtn').onclick=async()=>{try{player=await OnlineCore.recover($('accRecover').value);$('playerName').textContent=player.player_name;$('accName').value=player.player_name;$('accCode').textContent=OnlineCore.getStoredRecoveryCode()||'保存済み';$('accMsg').textContent='引き継ぎました。次回以降は自動復旧します。';render()}catch(e){$('accMsg').textContent=e.message}};
+}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function how(){showDialog('遊び方','<div class="how"><div><b>① 同じ文字を2個以上つなげる</b><br>上下左右でつながった文字が対象です。</div><div><b>② 1回タップで選択、2回目で消去</b><br>まとめて消すほど高得点です。</div><div><b>③ 「？」は特殊ブロック</b><br>1回目で対象文字を確認し、2回目で周囲の同じ文字を集めます。</div><div><b>④ 盤面に手がなくなったら判定</b><br>NEXT STAGEの必要SCOREに届いていれば次LEVEL、届かなければGAME OVERです。</div></div>','閉じる',hideDialog)}
+boardEl.addEventListener('click',e=>{const c=e.target.closest('.cell');if(c)tap(Number(c.dataset.i))});$('howBtn').onclick=how;$('playerBtn').onclick=playerSettings;$('rankingBtn').onclick=ranking;$('restartBtn').onclick=()=>showDialog('最初からやり直す？','現在のSCOREとLEVELを0からやり直します。','やり直す',()=>{score=0;level=1;hideDialog();newBoard()},{text:'キャンセル',fn:hideDialog});
+(async()=>{try{await OnlineCore.init();player=await OnlineCore.ensurePlayer();$('playerName').textContent=player.player_name;sync.textContent='● オンライン接続済み';sync.className='sync ok'}catch(e){$('playerName').textContent='OFFLINE';sync.textContent='オンライン接続エラー: '+e.message;sync.className='sync err'}newBoard()})();})();
+</script></body></html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="theme-color" content="#12263f" />
+<title>STACK QUEST</title>
+<style>
+:root{
+  --bg:#eef2f4;--ink:#1d2a33;--muted:#72808a;--panel:#ffffff;--line:#d8e0e5;
+  --atk:#ef6a62;--atkInk:#a92d2a;--def:#6bb6e8;--defInk:#1e6e9f;
+  --chest:#f2c94c;--chestInk:#8a6600;--heal:#70c58b;--healInk:#256f3c;--time:#b993e8;--timeInk:#63379b;
+  --boss:#5a405e;--accent:#203e5f;--danger:#d95050;--good:#2d8b57;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink);overscroll-behavior:none}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);user-select:none;-webkit-user-select:none}
+button{font:inherit;touch-action:manipulation}
+.app{width:min(720px,100%);margin:auto;min-height:100dvh;background:#f6f8f9;display:flex;flex-direction:column}
+.header{background:#12263f;color:#fff;padding:12px 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #f2c94c}
+.title{font-weight:950;letter-spacing:.08em;font-size:20px}.proto{font-size:10px;opacity:.9;margin-left:6px;background:#f2c94c;color:#12263f;padding:2px 5px;border-radius:999px;letter-spacing:.04em}.spacer{flex:1}.headerBtn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:7px 10px;font-size:11px;font-weight:800}
+.topstats{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:1px solid var(--line)}
+.stat{padding:9px 6px;text-align:center;border-right:1px solid var(--line)}.stat:last-child{border-right:0}.statLabel{font-size:9px;color:var(--muted);font-weight:800;letter-spacing:.06em}.statVal{margin-top:3px;font-size:17px;font-weight:950;color:#15395d}
+.bossArea{padding:12px 14px 11px;background:#e7edf1;border-bottom:1px solid #cfd9df}
+.bossRow{display:flex;align-items:center;gap:12px}.bossIcon{width:58px;height:58px;border-radius:18px;background:var(--boss);display:grid;place-items:center;color:#fff;font-size:30px;font-weight:900;box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
+.bossInfo{flex:1}.bossTitle{display:flex;align-items:center;gap:8px;font-weight:900}.bossName{font-size:16px}.attackBadge{font-size:10px;background:#fff;color:#874646;padding:4px 7px;border-radius:999px;border:1px solid #e0c6c6}
+.bar{height:12px;margin-top:8px;background:#c9d3d9;border-radius:999px;overflow:hidden}.barFill{height:100%;width:100%;background:#d95e5e;transition:width .25s ease}.bossMeta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#5f6d77;font-weight:750}
+.goal{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:9px 14px;background:#fff;border-bottom:1px solid var(--line)}
+.goalBox{border:1px solid var(--line);border-radius:11px;padding:8px 10px;background:#fafcfd}.goalBox.point{background:#fff9de;border-color:#e8dc9c}.goalLabel{font-size:9px;color:var(--muted);font-weight:800}.goalVal{font-size:19px;font-weight:950;margin-top:2px}.point .goalVal{color:#8a6600}.goalSub{font-size:9px;color:#73818b;margin-top:2px}
+.boardShell{padding:10px 10px 6px;background:#f1f4f6}.board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:4px;padding:6px;background:#23384d;border-radius:14px;touch-action:none}
+.tile{position:relative;min-width:0;min-height:0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:950;overflow:hidden;transform:translateZ(0);transition:transform .12s ease,opacity .18s ease;touch-action:none}
+.tile::before{content:"";position:absolute;inset:0;border:1px solid rgba(0,0,0,.06);border-radius:inherit;pointer-events:none}.tile.empty{visibility:hidden;pointer-events:none}.tile.atk{background:var(--atk);color:var(--atkInk)}.tile.def{background:var(--def);color:var(--defInk)}.tile.chest{background:var(--chest);color:var(--chestInk)}.tile.heal{background:var(--heal);color:#fff}.tile.time{background:var(--time);color:var(--timeInk)}
+.icon{width:58%;height:58%;display:grid;place-items:center;line-height:1}.icon svg{width:100%;height:100%;display:block;overflow:visible}.tile.heal .icon{width:42%;height:42%}.tileValue{position:absolute;right:3px;bottom:2px;background:rgba(255,255,255,.92);border-radius:999px;min-width:22px;height:20px;padding:0 5px;display:grid;place-items:center;font-size:11px;font-weight:950;color:#243542;border:1px solid rgba(0,0,0,.08)}
+.tile.stacked{outline:2px solid rgba(255,255,255,.85);outline-offset:-3px}.tile.heal .tileValue,.tile.time .tileValue{position:static;background:rgba(255,255,255,.94);font-size:13px;height:24px;min-width:28px;margin-left:2px}.tile.heal .tileValue{color:var(--healInk)}.tile.time .tileValue{color:var(--timeInk)}
+.tile.pressing{transform:scale(.91);filter:brightness(1.07)}.tile.flash{animation:flash .36s ease}.tile.stackMade{animation:stackMade .55s cubic-bezier(.2,.8,.2,1)}.tile.pop{animation:pop .22s ease}.tile.hit{animation:hit .25s ease}@keyframes flash{50%{transform:scale(1.09);filter:brightness(1.2)}}@keyframes stackMade{0%{transform:scale(.55)}55%{transform:scale(1.22)}100%{transform:scale(1)}}@keyframes pop{60%{transform:scale(1.15)}100%{transform:scale(.2);opacity:0}}@keyframes hit{50%{transform:translateX(4px)}}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 10px}.ctrl{border:1px solid #b9c8d3;background:#fff;color:#183a5d;border-radius:12px;padding:10px 8px;font-weight:900;font-size:12px}.ctrl.mix{background:#e9f1f7}.ctrl.restart{color:#8f4141;background:#fff7f7;border-color:#e2c6c6}
+.status{margin:2px 10px 10px;padding:10px 12px;border-radius:11px;background:#fff;border:1px solid var(--line);font-size:12px;line-height:1.5;color:#51616d;min-height:45px}.status strong{color:#173d62}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:0 10px 12px}.leg{font-size:9px;color:#5e6c75;text-align:center}.dot{width:12px;height:12px;border-radius:3px;display:inline-block;vertical-align:-2px;margin-right:3px}.dAtk{background:var(--atk)}.dDef{background:var(--def)}.dChest{background:var(--chest)}.dHeal{background:var(--heal)}.dTime{background:var(--time)}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(10,22,34,.62);display:flex;align-items:center;justify-content:center;padding:16px}.overlay.hidden{display:none}.modal{width:min(520px,94vw);max-height:90dvh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.22)}.modalHead{background:#12263f;color:#fff;padding:15px 17px;font-weight:950;font-size:20px}.modalBody{padding:15px 16px;color:#44545f;font-size:13px;line-height:1.65}.modalBody h3{margin:12px 0 5px;color:#163b5d;font-size:14px}.modalBody p{margin:4px 0 10px}.modalButtons{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line);position:sticky;bottom:0;background:#fff}.primary,.secondary{border-radius:11px;padding:10px 14px;font-weight:900}.primary{border:0;background:#1d5d92;color:#fff}.secondary{border:1px solid #b8c6d1;background:#fff;color:#234660}.ruleGrid{display:grid;gap:8px}.rule{padding:9px 10px;border:1px solid #dce4e9;border-radius:10px;background:#fafcfd}.rule b{color:#183e61}.tiny{font-size:10px;color:#7a8790}.resultBig{text-align:center;font-size:36px;font-weight:950;color:#163c60;margin:7px 0}.danger{color:var(--danger);font-weight:900}.good{color:var(--good);font-weight:900}
+
+.fxNum{position:fixed;z-index:80;pointer-events:none;font-weight:1000;font-size:28px;line-height:1;transform:translate(-50%,-50%);animation:fxRise .85s cubic-bezier(.18,.72,.2,1) forwards;text-shadow:0 2px 0 rgba(255,255,255,.95),0 3px 8px rgba(0,0,0,.18)}
+.fxAtk{color:#d43f3a}.fxDef{color:#1688c9}.fxChest{color:#b78300}.fxHeal{color:#238749}.fxTime{color:#7b42bd}.fxBoss{color:#d43f3a;font-size:25px}.fxStack{color:#6947c7;font-size:30px}.fxSmall{font-size:21px}
+.stat.bump .statVal,.goalBox.bump .goalVal,.bossArea.bump .bossHpText{animation:valueBump .4s ease}.bossIcon.bossStrike{animation:bossStrike .55s ease}.app.damageFlash{animation:damageFlash .42s ease}
+@keyframes fxRise{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}18%{opacity:1;transform:translate(-50%,-58%) scale(1.16)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-145%) scale(.95)}}
+@keyframes valueBump{50%{transform:scale(1.22)}}
+@keyframes bossStrike{35%{transform:translateY(8px) scale(1.08)}70%{transform:translateY(-2px) scale(.98)}}
+@keyframes damageFlash{40%{filter:brightness(.9) sepia(.25) saturate(1.5)}}
+
+
+.onlinebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;background:#fff;border-bottom:1px solid var(--line);font-size:10px;color:#607789}.onlinebar b{color:#173d62}.onlinebar .sp{flex:1}.onlineBtn,.homeLink{border:1px solid #b9c8d3;background:#fff;color:#183a5d;border-radius:9px;padding:7px 9px;font-size:10px;font-weight:900;text-decoration:none}.onlineState.ok{color:#278a45}.onlineState.err{color:#b34242}.ranking{width:100%;border-collapse:collapse;font-size:12px}.ranking th,.ranking td{padding:8px 5px;border-bottom:1px solid #e1e7ec;text-align:left}.ranking th:last-child,.ranking td:last-child{text-align:right}.ranking tr.me{background:#fff4b7}.bestLine{font-size:10px;color:#607789}.bestLine b{color:#173d62}
+@media(max-width:480px){.app{min-height:100dvh}.header{padding-top:10px}.title{font-size:18px}.topstats .stat{padding:7px 3px}.statVal{font-size:15px}.bossArea{padding:9px 10px}.bossIcon{width:50px;height:50px;border-radius:15px;font-size:26px}.goal{padding:7px 10px}.goalVal{font-size:17px}.boardShell{padding:8px 6px 4px}.board{gap:3px;padding:5px;border-radius:12px}.tile{border-radius:7px}.tileValue{font-size:9px;min-width:19px;height:18px;padding:0 4px}.controls{padding:5px 6px}.status{margin:2px 6px 8px}.legend{padding:0 6px 10px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="title">STACK QUEST<span class="proto">ONLINE</span></div>
+    <div class="spacer"></div>
+    <a class="headerBtn" href="../" style="text-decoration:none">ゲーム選択</a>
+    <button class="headerBtn" id="howBtn">遊び方</button>
+  </div>
+  <div class="onlinebar"><span>PLAYER <b id="playerName">接続中…</b></span><span class="bestLine">BEST <b id="bestScore">0</b> / STAGE <b id="bestStage">1</b></span><div class="sp"></div><button class="onlineBtn" id="playerBtn">プレイヤー</button><button class="onlineBtn" id="rankingBtn">ランキング</button><span class="onlineState" id="onlineState"></span></div>
+  <div class="topstats">
+    <div class="stat"><div class="statLabel">STAGE</div><div class="statVal" id="stageText">1</div></div>
+    <div class="stat"><div class="statLabel">HP</div><div class="statVal" id="hpText">100</div></div>
+    <div class="stat"><div class="statLabel">SHIELD</div><div class="statVal" id="shieldText">0</div></div>
+    <div class="stat"><div class="statLabel">TOTAL</div><div class="statVal" id="totalText">0</div></div>
+  </div>
+  <div class="bossArea">
+    <div class="bossRow">
+      <div class="bossIcon" id="bossIcon">♜</div>
+      <div class="bossInfo">
+        <div class="bossTitle"><span class="bossName" id="bossName">STONE BEAST</span><span class="attackBadge" id="attackBadge">あと3手で攻撃</span></div>
+        <div class="bar"><div class="barFill" id="bossBar"></div></div>
+        <div class="bossMeta"><span id="bossHpText">HP 60 / 60</span><span id="bossAtkText">ATK 10</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="goal">
+    <div class="goalBox point">
+      <div class="goalLabel">STAGE SCORE</div>
+      <div class="goalVal"><span id="stagePoint">0</span> pt</div>
+      <div class="goalSub">進行条件ではなく、ハイスコア用</div>
+    </div>
+    <div class="goalBox">
+      <div class="goalLabel">BOSS REWARD</div>
+      <div class="goalVal" id="bossReward">90 pt</div>
+      <div class="goalSub" id="chestNeed">後半ほど宝箱の得点が重要</div>
+    </div>
+  </div>
+  <div class="boardShell"><div class="board" id="board"></div></div>
+  <div class="controls">
+    <button class="ctrl mix" id="mixBtn">MIX（1手消費）</button>
+    <button class="ctrl restart" id="restartBtn">最初から</button>
+  </div>
+  <div class="status" id="status"><strong>タップ</strong>で発動、<strong>長押し</strong>で3個以上をスタックします。</div>
+  <div class="legend">
+    <div class="leg"><span class="dot dAtk"></span>攻撃</div><div class="leg"><span class="dot dDef"></span>防御</div><div class="leg"><span class="dot dChest"></span>宝箱</div><div class="leg"><span class="dot dHeal"></span>回復</div><div class="leg"><span class="dot dTime"></span>延長</div>
+  </div>
+</div>
+<div class="overlay" id="overlay"><div class="modal"><div class="modalHead" id="modalTitle"></div><div class="modalBody" id="modalBody"></div><div class="modalButtons" id="modalButtons"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../shared/online.js"></script>
+<script>
+(()=>{
+'use strict';
+const ROWS=8,COLS=8,SIZE=64,MAX_HP=100,ATTACK_INTERVAL=3,LONG_PRESS=520;
+const TYPES={ATK:'atk',DEF:'def',CHEST:'chest',HEAL:'heal',TIME:'time'};
+const ICON={
+atk:`<svg viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-38 32 32)"><path d="M32 5l7 7-2 26-5 6-5-6-2-26 7-7z" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><path d="M18 34h28" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><path d="M26 34v10M38 34v10" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M28 44h8v8h-8z" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round"/><path d="M32 52v9" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/></g></svg>`,
+def:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7l20 8v15c0 13-8 22-20 28C20 52 12 43 12 30V15l20-8z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><path d="M32 15v34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".65"/></svg>`,
+chest:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24h44v30H10z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><path d="M14 24c0-9 7-15 18-15s18 6 18 15M10 34h44M27 34v11h10V34" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+heal:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M27 9h10v18h18v10H37v18H27V37H9V27h18z" fill="currentColor"/></svg>`,
+time:`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="23" fill="none" stroke="currentColor" stroke-width="6"/><path d="M32 18v15l10 7" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+const BOSS_NAMES=['STONE BEAST','NIGHT OWL','IRON HORN','SEA WYRM','VOID KNIGHT','ASH GOLEM','CROWN SERPENT','BLACK TITAN'];
+const BOSS_ICONS=['♜','♞','♝','♛','♚','♟','♣','♠'];
+let board=[],stage=1,hp=MAX_HP,shield=0,total=0,stagePoints=0,moves=0,bossMax=0,bossHp=0,bossAtk=0,reward=0,locked=false,attackPending=false,attackCount=0,movesUntilAttack=3,onlinePlayer=null,onlineBestScore=0,onlineBestStage=1;
+let pressTimer=null,pressIndex=-1,longTriggered=false;
+const $=id=>document.getElementById(id),boardEl=$('board'),statusEl=$('status'),overlay=$('overlay');
+const fmt=n=>Math.max(0,Math.floor(n)).toLocaleString('ja-JP');
+function bossStats(s){
+  const maxHp=Math.round((150*Math.pow(1.48,s-1))/5)*5;
+  const atk=Math.round(13*Math.pow(1.18,s-1));
+  const bossReward=Math.round((100*Math.pow(s,1.28))/5)*5;
+  return {maxHp,atk,bossReward};
+}
+function chestMultiplier(){return 10+Math.min(30,stage*2)}
+function newTile(){
+  const rare=Math.random();
+  if(rare<0.015){const base=[8,10,12,15,18][Math.floor(Math.random()*5)];return {type:TYPES.HEAL,value:Math.min(30,base+Math.floor(stage/5)*2),stacked:false};}
+  if(rare<0.030){return {type:TYPES.TIME,value:2,stacked:false};}
+  const r=Math.random(); const type=r<.39?TYPES.ATK:r<.72?TYPES.DEF:TYPES.CHEST; return {type,value:1,stacked:false};
+}
+function initBoard(){board=Array.from({length:SIZE},()=>newTile());ensureMove();}
+function idx(r,c){return r*COLS+c}
+function rc(i){return [Math.floor(i/COLS),i%COLS]}
+function neigh(i){const [r,c]=rc(i),a=[];if(r>0)a.push(idx(r-1,c));if(r<ROWS-1)a.push(idx(r+1,c));if(c>0)a.push(idx(r,c-1));if(c<COLS-1)a.push(idx(r,c+1));return a}
+function groupFrom(start){const t=board[start];if(!t||t.type===TYPES.HEAL||t.type===TYPES.TIME)return [start];const seen=new Set([start]),q=[start];while(q.length){const i=q.shift();for(const n of neigh(i)){if(!seen.has(n)&&board[n]&&board[n].type===t.type){seen.add(n);q.push(n)}}}return [...seen]}
+function hasMatch(){for(let i=0;i<SIZE;i++)if(board[i]&&board[i].type!==TYPES.HEAL&&board[i].type!==TYPES.TIME&&groupFrom(i).length>=3)return true;return false}
+function ensureMove(){if(hasMatch())return;for(let k=0;k<24&&!hasMatch();k++){for(let i=board.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[board[i],board[j]]=[board[j],board[i]]}}if(!hasMatch()){for(const i of [0,1,2])board[i]={type:TYPES.ATK,value:1,stacked:false}}}
+function render(){
+  boardEl.innerHTML='';
+  board.forEach((t,i)=>{const d=document.createElement('div');if(!t){d.className='tile empty';d.dataset.i=i;boardEl.appendChild(d);return}d.className='tile '+t.type+(t.stacked?' stacked':'');d.dataset.i=i;const icon=document.createElement('div');icon.className='icon';icon.innerHTML=ICON[t.type];d.appendChild(icon);if(t.type===TYPES.HEAL||t.type===TYPES.TIME||t.value>1){const v=document.createElement('div');v.className='tileValue';v.textContent=t.type===TYPES.HEAL?('+'+fmt(t.value)):t.type===TYPES.TIME?('+2'):fmt(t.value);d.appendChild(v)}boardEl.appendChild(d)});
+  $('stageText').textContent=stage;$('hpText').textContent=fmt(hp);$('shieldText').textContent=fmt(shield);$('totalText').textContent=fmt(total);$('bestScore').textContent=fmt(Math.max(total,onlineBestScore));$('bestStage').textContent=Math.max(stage,onlineBestStage);$('stagePoint').textContent=fmt(stagePoints);$('bossReward').textContent=fmt(reward)+' pt';
+  $('bossHpText').textContent='HP '+fmt(bossHp)+' / '+fmt(bossMax);$('bossAtkText').textContent='ATK '+fmt(bossAtk);$('bossBar').style.width=Math.max(0,bossHp/bossMax*100)+'%';
+  $('attackBadge').textContent=attackPending?'攻撃準備…':'あと'+movesUntilAttack+'手で攻撃';
+  $('chestNeed').textContent=stage<5?'宝箱でスコアを上乗せ':'後半ほど宝箱の得点が重要';
+  $('bossName').textContent=BOSS_NAMES[(stage-1)%BOSS_NAMES.length];$('bossIcon').textContent=BOSS_ICONS[(stage-1)%BOSS_ICONS.length];
+}
+function refill(){
+  for(let c=0;c<COLS;c++){const vals=[];for(let r=ROWS-1;r>=0;r--){const t=board[idx(r,c)];if(t)vals.push(t)}for(let r=ROWS-1;r>=0;r--){board[idx(r,c)]=vals[ROWS-1-r]||newTile()}}
+  ensureMove();render();
+}
+function stackValue(group){const totalUnits=group.reduce((a,i)=>{const v=Math.max(1,Number(board[i]?.value||1));return a+Math.max(1,Math.round(Math.sqrt(v)));},0);return totalUnits*totalUnits}
+function setStatus(html){statusEl.innerHTML=html}
+function bump(el){if(!el)return;const box=el.closest('.stat,.goalBox,.bossArea')||el;box.classList.remove('bump');void box.offsetWidth;box.classList.add('bump');setTimeout(()=>box.classList.remove('bump'),450)}
+function fxNumber(el,text,kind='fxSmall'){if(!el)return;const r=el.getBoundingClientRect();const d=document.createElement('div');d.className='fxNum '+kind;d.textContent=text;d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top+r.height/2)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),900);bump(el)}
+function fxTile(i,text,kind='fxStack'){const el=document.querySelector(`.tile[data-i="${i}"]`);if(!el)return;const r=el.getBoundingClientRect();const d=document.createElement('div');d.className='fxNum '+kind;d.textContent=text;d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top+r.height/2)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),900)}
+function consumeMove(){
+  moves++;
+  movesUntilAttack--;
+  if(movesUntilAttack>0){render();return true}
+  locked=true;attackPending=true;render();
+  setTimeout(()=>{
+    $('bossIcon').classList.add('bossStrike');
+    setTimeout(()=>$('bossIcon').classList.remove('bossStrike'),600);
+    enemyAttack();
+    attackPending=false;
+    attackCount++;
+    bossAtk=Math.max(1,Math.round(bossAtk*1.20));
+    movesUntilAttack=attackCount>=4?2:3;
+    render();
+    if(hp<=0){gameOver('HPが0になりました');return}
+    locked=false;
+  },700);
+  return true;
+}
+function enemyAttack(){const atkNow=bossAtk;let dmg=atkNow,blocked=0;const shieldBefore=shield;if(shieldBefore>0){blocked=Math.min(shieldBefore,dmg);dmg-=blocked;shield=0}
+  if(shieldBefore>0)fxNumber($('shieldText'),'SHIELD END','fxDef fxSmall');
+  if(dmg>0){hp=Math.max(0,hp-dmg);fxNumber($('hpText'),'-'+fmt(dmg),'fxBoss');document.querySelector('.app').classList.add('damageFlash');setTimeout(()=>document.querySelector('.app').classList.remove('damageFlash'),450);setStatus('<span class="danger">ボスの攻撃！ '+fmt(atkNow)+' ATK</span>　シールド '+fmt(blocked)+' 防御 / HP '+fmt(dmg)+' ダメージ。次回攻撃は20%強化。')}else{fxNumber($('shieldText'),'BLOCK','fxDef fxSmall');setStatus('<span class="good">シールドで '+fmt(atkNow)+' ダメージを完全防御！</span> シールドはこの攻撃で消滅。次回攻撃は20%強化。')}}
+function doStack(i){
+  if(locked)return;
+  const t=board[i];
+  if(!t||t.type===TYPES.HEAL||t.type===TYPES.TIME)return;
+  const g=groupFrom(i);
+  if(g.length<3){
+    setStatus('スタックには<strong>同じタイルが3個以上</strong>つながっている必要があります。');
+    return;
+  }
+
+  locked=true;
+  const val=stackValue(g);
+  const stackedTile={type:t.type,value:val,stacked:true};
+  g.forEach(j=>board[j]=null);
+  board[i]=stackedTile;
+  refill();
+
+  // refillで落下した後の位置を探して、その場所で数値演出を出す。
+  const finalIndex=board.indexOf(stackedTile);
+  const finalEl=document.querySelector(`.tile[data-i="${finalIndex}"]`);
+  if(finalEl){finalEl.classList.add('stackMade');setTimeout(()=>finalEl.classList.remove('stackMade'),650)}
+  fxTile(finalIndex,'STACK '+fmt(val),'fxStack');
+  setStatus('<strong>'+g.length+'個をスタック → '+fmt(val)+'</strong> に強化。さらに同種をつないで育てられます。');
+  locked=false;
+  consumeMove();
+}
+function doTap(i){
+  if(locked)return;const t=board[i];if(!t)return;
+  if(t.type===TYPES.HEAL){locked=true;const before=hp;hp=Math.min(MAX_HP,hp+t.value);const healed=hp-before;board[i]=null;setStatus('<span class="good">HPを '+fmt(healed)+' 回復。</span> 回復タイルは1個から使えます。');refill();fxNumber($('hpText'),'+'+fmt(healed)+' HP','fxHeal');locked=false;consumeMove();return}
+  if(t.type===TYPES.TIME){locked=true;board[i]=null;movesUntilAttack+=2;setStatus('<strong>⏱ 敵の攻撃まで +2手！</strong> このタイルは1個から使えます。');refill();fxNumber($('attackBadge'),'+2 TURN','fxTime');locked=false;render();return}
+  const g=groupFrom(i);if(g.length<3){setStatus('発動には<strong>同じタイルを3個以上</strong>つなげてタップします。長押しならスタックできます。');return}
+  locked=true;const power=g.reduce((a,j)=>a+(board[j]?.value||0),0);g.forEach(j=>board[j]=null);
+  let effectText='',effectKind='',effectEl=null;
+  if(t.type===TYPES.ATK){bossHp=Math.max(0,bossHp-power);setStatus('<strong>🗡 '+fmt(power)+' ダメージ！</strong>');effectText='-'+fmt(power);effectKind='fxAtk';effectEl=$('bossHpText');}
+  if(t.type===TYPES.DEF){shield+=power;setStatus('<strong>🛡 シールド +'+fmt(power)+'</strong>　現在 '+fmt(shield));effectText='+'+fmt(power)+' SHIELD';effectKind='fxDef';effectEl=$('shieldText');}
+  if(t.type===TYPES.CHEST){const pts=power*chestMultiplier();stagePoints+=pts;total+=pts;setStatus('<strong>💰 宝箱 +'+fmt(pts)+' pt</strong>　TOTAL SCOREを伸ばします。');effectText='+'+fmt(pts)+' pt';effectKind='fxChest';effectEl=$('stagePoint');}
+  refill();
+  if(effectEl)fxNumber(effectEl,effectText,effectKind);
+  if(t.type===TYPES.ATK&&bossHp<=0){setTimeout(()=>bossDefeated(),600);return}
+  locked=false;consumeMove();render();
+}
+async function saveOnlineBest(){
+  if(!onlinePlayer)return;
+  try{const r=await OnlineCore.api('/api/stack/submit',{method:'POST',body:JSON.stringify({score:total,stage})});onlineBestScore=Number(r.score?.best_score||onlineBestScore);onlineBestStage=Number(r.score?.best_stage||onlineBestStage);$('onlineState').textContent='● 保存済み';$('onlineState').className='onlineState ok';render()}catch(e){$('onlineState').textContent='保存失敗';$('onlineState').className='onlineState err'}
+}
+async function openRanking(){showModal('STACK QUEST ランキング','読み込み中…','閉じる',hideModal);try{const r=await OnlineCore.api('/api/stack/leaderboard');let h='<table class="ranking"><tr><th>順位</th><th>PLAYER</th><th>STAGE</th><th>SCORE</th></tr>';for(const x of r.rows)h+=`<tr class="${x.auth_user_id===onlinePlayer?.auth_user_id?'me':''}"><td>${x.rank}</td><td>${esc(x.player_name)}</td><td>${x.best_stage}</td><td>${fmt(x.best_score)}</td></tr>`;h+='</table>';if(r.myRank)h+='<p>あなたの順位：<b>'+r.myRank+'位</b></p>';$('modalBody').innerHTML=h}catch(e){$('modalBody').textContent=e.message}}
+async function openPlayerSettings(){
+  const p=onlinePlayer||OnlineCore.getPlayer();
+  const code=OnlineCore.getStoredRecoveryCode()||'この端末には保存されていません';
+  showModal('プレイヤー設定',
+    '<div style="display:grid;gap:10px">'+
+    '<div><b>プレイヤー名</b></div>'+
+    '<input id="accName" maxlength="16" value="'+esc(p?.player_name||'')+'" style="width:100%;font-size:16px;padding:10px;border:1px solid #b8c6d1;border-radius:10px">'+
+    '<button id="accRename" class="secondary">名前を変更</button>'+
+    '<hr style="width:100%;border:0;border-top:1px solid #dce4e9">'+
+    '<div><b>引き継ぎコード</b></div>'+
+    '<div id="accCode" style="font-family:ui-monospace,monospace;background:#eef3f7;padding:10px;border-radius:10px;font-weight:900;word-break:break-all">'+esc(code)+'</div>'+
+    '<div class="tiny">同じURL・同じブラウザなら、ゲーム更新後も通常は自動で同じプレイヤーを使います。コードは端末変更やブラウザデータ削除時の保険です。</div>'+
+    '<button id="accNewCode" class="secondary">コードを発行 / 再発行</button>'+
+    '<hr style="width:100%;border:0;border-top:1px solid #dce4e9">'+
+    '<div><b>別端末・別セッションから引き継ぐ</b></div>'+
+    '<input id="accRecover" placeholder="XXXX-XXXX-XXXX" style="width:100%;font-size:16px;padding:10px;border:1px solid #b8c6d1;border-radius:10px">'+
+    '<button id="accRecoverBtn" class="secondary">このコードで引き継ぐ</button>'+
+    '<div id="accMsg" class="tiny"></div>'+
+    '</div>',
+    '閉じる',hideModal
+  );
+  $('accRename').onclick=async()=>{try{onlinePlayer=await OnlineCore.rename($('accName').value);$('playerName').textContent=onlinePlayer.player_name;$('accMsg').textContent='名前を変更しました'}catch(e){$('accMsg').textContent=e.message}};
+  $('accNewCode').onclick=async()=>{try{const r=await OnlineCore.newRecovery();$('accCode').textContent=r.recoveryCode;$('accMsg').textContent='新しいコードを発行しました。以前のコードは無効です。'}catch(e){$('accMsg').textContent=e.message}};
+  $('accRecoverBtn').onclick=async()=>{try{onlinePlayer=await OnlineCore.recover($('accRecover').value);$('playerName').textContent=onlinePlayer.player_name;$('accName').value=onlinePlayer.player_name;$('accCode').textContent=OnlineCore.getStoredRecoveryCode()||'保存済み';$('accMsg').textContent='引き継ぎました。次回以降は自動復旧します。';const r=await OnlineCore.api('/api/stack/leaderboard');if(r.me){onlineBestScore=Number(r.me.best_score||0);onlineBestStage=Number(r.me.best_stage||1)}render()}catch(e){$('accMsg').textContent=e.message}};
+}
+function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function bossDefeated(){
+  stagePoints+=reward;total+=reward;render();fxNumber($('stagePoint'),'BOSS +'+fmt(reward)+' pt','fxChest');
+  locked=true;saveOnlineBest();const best=Math.max(stage,Number(localStorage.getItem('sq_best_stage')||0));localStorage.setItem('sq_best_stage',best);localStorage.setItem('sq_best_score',Math.max(total,Number(localStorage.getItem('sq_best_score')||0)));
+  setTimeout(()=>showModal('STAGE '+stage+' CLEAR','<div class="resultBig">'+fmt(stagePoints)+' pt</div><p class="good">ボス撃破でSTAGE CLEAR</p><p>ボス撃破報酬 <b>'+fmt(reward)+' pt</b> を獲得しました。<br>次のSTAGEでは <b>シールドは0にリセット</b> されます。</p>','次のSTAGEへ',()=>{stage++;startStage(false);hideModal();locked=false}),450);
+}
+function startStage(resetBoard){const s=bossStats(stage);bossMax=s.maxHp;bossHp=bossMax;bossAtk=s.atk;reward=s.bossReward;stagePoints=0;moves=0;attackPending=false;attackCount=0;movesUntilAttack=3;shield=0;if(resetBoard)initBoard();render();setStatus('STAGE '+stage+'。<strong>ボスを倒せば次のSTAGEへ。</strong> ボスは攻撃するたびATKが20%上昇し、5回目以降は2手ごとに攻撃。シールドは1回の攻撃で消滅します。')}
+function gameOver(reason){locked=true;saveOnlineBest();localStorage.setItem('sq_best_stage',Math.max(stage,Number(localStorage.getItem('sq_best_stage')||0)));localStorage.setItem('sq_best_score',Math.max(total,Number(localStorage.getItem('sq_best_score')||0)));showModal('GAME OVER','<p class="danger">'+reason+'</p><div class="resultBig">'+fmt(total)+' pt</div><p>到達 STAGE <b>'+stage+'</b><br>BEST STAGE <b>'+Math.max(stage,Number(localStorage.getItem('sq_best_stage')||0))+'</b> / BEST SCORE <b>'+fmt(Math.max(total,Number(localStorage.getItem('sq_best_score')||0)))+'</b></p>','もう一度',()=>restartGame())}
+function restartGame(){stage=1;hp=MAX_HP;shield=0;total=0;stagePoints=0;moves=0;locked=false;initBoard();startStage(false);hideModal()}
+function mixBoard(){if(locked)return;locked=true;for(let i=board.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[board[i],board[j]]=[board[j],board[i]]}ensureMove();render();setStatus('盤面をMIXしました。<strong>1手消費</strong>します。');locked=false;consumeMove()}
+function showModal(title,body,btnText,onBtn,secondary){$('modalTitle').textContent=title;$('modalBody').innerHTML=body;$('modalButtons').innerHTML='';if(secondary){const b=document.createElement('button');b.className='secondary';b.textContent=secondary.text;b.onclick=secondary.fn;$('modalButtons').appendChild(b)}if(btnText){const b=document.createElement('button');b.className='primary';b.textContent=btnText;b.onclick=onBtn;$('modalButtons').appendChild(b)}overlay.classList.remove('hidden')}
+function hideModal(){overlay.classList.add('hidden')}
+function showHow(){showModal('遊び方','<div class="ruleGrid"><div class="rule"><b>① タップ＝発動</b><br>攻撃・防御・宝箱は、同じ種類が3個以上つながっていると使えます。</div><div class="rule"><b>② 長押し＝スタック</b><br>3個以上を1個にまとめて数値化。通常タイルだけなら、3個→9、4個→16、5個→25。強化済みタイルもさらにまとめられます。シールドはステージクリア時にリセットされます。</div><div class="rule"><b>③ 攻撃（剣）</b><br>数値分だけボスHPを削ります。ボスを倒すとPOINT獲得。</div><div class="rule"><b>④ 防御（盾）</b><br>数値分のシールドを獲得。シールドは次のボス攻撃1回だけ有効で、攻撃後は残量に関係なく0になります。</div><div class="rule"><b>⑤ 宝箱</b><br>POINT獲得。STAGE進行条件ではありません。ボスは攻撃するたびATKが20%上がり、5回目以降は2手ごとに攻撃するため、宝箱稼ぎを長引かせるほど危険になります。</div><div class="rule"><b>⑥ 回復 +</b><br>レア出現。1個だけでもタップして使用でき、表示された数だけHPを回復します。</div><div class="rule"><b>⑦ 時間延長 ⏱</b><br>回復と同じ出現率。1個タップで使用でき、敵の攻撃までの手数を+2します。このタイルの使用自体では敵カウントは進みません。</div><div class="rule"><b>⑧ ゲームオーバー</b><br>HPが0になると終了です。ボスを倒せばPOINTに関係なく次のSTAGEへ進めます。</div></div><p class="tiny">※プロトタイプのため、敵HP・攻撃力・出現率・POINT倍率は仮設定です。スタックの基本はMUJO型（3個以上を長押しして1個にまとめる）を採用しています。</p>','ゲームへ戻る',hideModal)}
+boardEl.addEventListener('pointerdown',e=>{const tile=e.target.closest('.tile');if(!tile||locked)return;pressIndex=Number(tile.dataset.i);longTriggered=false;tile.classList.add('pressing');pressTimer=setTimeout(()=>{longTriggered=true;tile.classList.remove('pressing');doStack(pressIndex)},LONG_PRESS);e.preventDefault()});
+function releasePointer(e){const tile=e.target.closest('.tile');if(pressTimer){clearTimeout(pressTimer);pressTimer=null}if(tile)tile.classList.remove('pressing');if(!longTriggered&&pressIndex>=0){const i=pressIndex;pressIndex=-1;doTap(i)}else pressIndex=-1}
+boardEl.addEventListener('pointerup',releasePointer);window.addEventListener('pointerup',e=>{if(pressIndex>=0&&!e.target.closest?.('.tile'))releasePointer(e)});boardEl.addEventListener('pointercancel',()=>{if(pressTimer)clearTimeout(pressTimer);pressTimer=null;pressIndex=-1;longTriggered=false;document.querySelectorAll('.pressing').forEach(x=>x.classList.remove('pressing'))});boardEl.addEventListener('contextmenu',e=>e.preventDefault());
+$('mixBtn').onclick=mixBoard;$('playerBtn').onclick=openPlayerSettings;$('rankingBtn').onclick=openRanking;$('restartBtn').onclick=()=>showModal('最初からやり直す？','<p>現在の進行は失われます。</p>','やり直す',restartGame,{text:'キャンセル',fn:hideModal});$('howBtn').onclick=showHow;
+initBoard();startStage(false);hideModal();setStatus('<strong>ゲーム開始。</strong> タップで発動、長押しで3個以上をスタックします。');
+(async()=>{try{await OnlineCore.init();onlinePlayer=await OnlineCore.ensurePlayer();$('playerName').textContent=onlinePlayer.player_name;const r=await OnlineCore.api('/api/stack/leaderboard');if(r.me){onlineBestScore=Number(r.me.best_score||0);onlineBestStage=Number(r.me.best_stage||1)}$('onlineState').textContent='● オンライン接続済み';$('onlineState').className='onlineState ok';render()}catch(e){$('playerName').textContent='OFFLINE';$('onlineState').textContent='接続エラー';$('onlineState').className='onlineState err'}})();
+})();
+</script>
+</body>
+</html>
