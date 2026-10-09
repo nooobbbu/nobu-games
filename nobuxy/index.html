@@ -79,8 +79,9 @@ function useShuffle(i,t){
   armedTarget=0;
   selected=[];
   collapse(); // 盤面の「下詰め＋空列左詰め」不変条件もここで再保証する。
-  render();
-  msg.textContent='？ 集結！「'+LETTER[t]+'」を近くへ集めました。';
+render();
+msg.textContent='？ 集結！「'+LETTER[t]+'」を近くへ集めました。';
+checkEnd();
 }
 function tap(i){if(!playing||!board[i])return;if(board[i]===SHUFFLE){if(armed===i){useShuffle(i,armedTarget);return}armed=i;armedTarget=chooseShuffleTarget(i);selected=[];render();msg.textContent='？ 周囲から「'+LETTER[armedTarget]+'」を集めます。もう1回タップで発動。';return}armed=-1;armedTarget=0;const g=group(i);if(g.length<2){selected=[];render();msg.textContent='同じ文字が2個以上つながった場所を選んでください。';return}if(selected.length&&selected.includes(i)&&selected.length===g.length){removeGroup(g)}else{selected=g;render();msg.textContent=g.length+'個を選択。もう1回タップで消去 → +'+fmt(5*g.length*g.length)+'点'}}
 function showDialog(title,body,btn,fn,secondary){$('modalTitle').textContent=title;$('modalBody').innerHTML=body;$('modalActions').innerHTML='';if(secondary){const s=document.createElement('button');s.className='secondary';s.textContent=secondary.text;s.onclick=secondary.fn;$('modalActions').appendChild(s)}if(btn){const b=document.createElement('button');b.className='primary';b.textContent=btn;b.onclick=fn;$('modalActions').appendChild(b)}overlay.classList.remove('hidden')}
